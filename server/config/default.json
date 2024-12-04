@@ -1,0 +1,5 @@
+{
+  "port": 5000,
+  "dbURL": "mongodb+srv://islushnyi:Kliforist8363213!@cluster0.8chek.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+  "secretKey": "cloud-storage-5000"
+}
