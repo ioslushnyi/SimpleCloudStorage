@@ -1,2 +1,4 @@
-# simple-cloud-storage
+# SimpleCloudStorage
+
+Small web application for uploading and storing files
  
