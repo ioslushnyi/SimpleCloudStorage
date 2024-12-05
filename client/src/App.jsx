@@ -29,24 +29,23 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div className="">
-        <Navbar />
-        <main>
-          <div className="bg-body-tertiary" style={{ height: "90vh" }}>
-            <Routes>
-              <Route index element={<Home />} />
-              {isAuth ? (
-                <Route path="drive" element={<Drive />} />
-              ) : (
-                <>
-                  <Route path="login" element={<Login />} />
-                  <Route path="registration" element={<Registration />} />
-                </>
-              )}
-
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </div>
+      <div className="d-flex flex-column vh-100 vw-100">
+        <header>
+          <Navbar />
+        </header>
+        <main className="bg-body-tertiary flex-grow-1 flex-shrink-1">
+          <Routes>
+            <Route index element={<Home />} />
+            {isAuth ? (
+              <Route path="drive" element={<Drive />} />
+            ) : (
+              <>
+                <Route path="login" element={<Login />} />
+                <Route path="registration" element={<Registration />} />
+              </>
+            )}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
         </main>
       </div>
     </BrowserRouter>
