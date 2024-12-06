@@ -4,6 +4,8 @@ import mongoose from "mongoose";
 import config from "config";
 import auth from "./routes/auth.js";
 import cors from "./middleware/cors.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 const app = express();
 const PORT = config.get("port");

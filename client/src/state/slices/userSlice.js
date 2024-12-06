@@ -12,38 +12,36 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: (create) => ({
-    authenticateUser: create.asyncThunk(
+    authorizeUser: create.asyncThunk(
       async (payload) => {
-        const response = await userAPI.authenticate(payload);
+        const authType = payload.type;
+        let response = {
+          data: null,
+        };
+        switch (authType) {
+          case "authFromToken":
+            response = await userAPI.authFromToken();
+            break;
+          case "login":
+            response = await userAPI.login(payload.data);
+            break;
+          case "register":
+            response = await userAPI.register(payload.data);
+            break;
+        }
         return response.data;
       },
       {
-        pending: (state) => {
+        pending: (state, action) => {
+          console.log(action);
           state.loading = true;
         },
         rejected: (state, action) => {
+          console.log(action);
           state.loading = false;
         },
         fulfilled: (state, action) => {
-          state.loading = false;
-          state.authenticated = true;
-          state.profile = action.payload.user;
-        },
-      }
-    ),
-    loginUser: create.asyncThunk(
-      async (payload) => {
-        const response = await userAPI.login(payload);
-        return response.data;
-      },
-      {
-        pending: (state) => {
-          state.loading = true;
-        },
-        rejected: (state, action) => {
-          state.loading = false;
-        },
-        fulfilled: (state, action) => {
+          console.log(action);
           state.loading = false;
           state.authenticated = true;
           state.profile = action.payload.user;
@@ -58,6 +56,6 @@ const userSlice = createSlice({
   }),
 });
 
-export const { loginUser, logoutUser, authenticateUser } = userSlice.actions;
+export const { authorizeUser, logoutUser } = userSlice.actions;
 
 export default userSlice.reducer;

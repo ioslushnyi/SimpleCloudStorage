@@ -1,19 +1,17 @@
 import { Router } from "express";
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
+import { randomBytes } from "node:crypto";
 import jwt from "jsonwebtoken";
 import config from "config";
 import { check, validationResult } from "express-validator";
 import authMiddleware from "../middleware/auth.js";
+import { sendVerificationEmail } from "../factories/emailFactory.js";
 
 const router = new Router();
 
-router.get("/registration", (req, res) => {
-  console.log("get registration");
-});
-
 router.post(
-  "/registration",
+  "/register",
   [
     check("email", "Incorrect email").isEmail(),
     check(
@@ -39,23 +37,63 @@ router.post(
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
-      const newUser = new User({ email, password: hashedPassword });
+      const emailVerificationString = randomBytes(10).toString("hex");
+      const newUser = new User({
+        email,
+        password: hashedPassword,
+        emailVerificationString,
+      });
       await newUser.save();
+      sendVerificationEmail(
+        email,
+        `http://127.0.0.1:5000/api/auth/verifyEmail?token=${emailVerificationString}`
+      );
       return res.json({ message: "User has been created" });
-    } catch (err) {}
+    } catch (err) {
+      console.log(err);
+      res.status(500).send({ message: "Server error" });
+    }
   }
 );
+
+router.get("/verifyEmail", async (req, res) => {
+  try {
+    const { token: emailVerificationString } = req.query;
+    const user = await User.findOne({ emailVerificationString });
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+    if (emailVerificationString === user.emailVerificationString) {
+      user.emailVerificationString = "";
+      user.isVerified = true;
+      await user.save();
+      //return res.status(201).json({ message: "Email successfully verified" });
+      res.redirect("http://localhost:5173/login?emailVerified=true");
+    } else {
+      //return res
+      //  .status(400)
+      //  .send({ message: "Token does not match a user record" });
+      res.redirect("http://localhost:5173/login?emailVerified=false");
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ message: "Server error" });
+  }
+});
 
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: "User not found" });
+      return res.status(400).json({ message: "USER_NOT_FOUND" });
     }
     const isPasswordValid = bcrypt.compareSync(password, user.password);
     if (!isPasswordValid) {
-      return res.status(400).json({ message: "Invalid password" });
+      return res.json({ message: "INVALID_PASSWORD" });
+    }
+    if (!user.isVerified) {
+      return res.status(200).json({ message: "NOT_VERIFIED" });
     }
     const token = jwt.sign({ id: user.id }, config.get("secretKey"), {
       expiresIn: "30m",
@@ -76,7 +114,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.get("/authenticate", authMiddleware, async (req, res) => {
+router.get("/authFromToken", authMiddleware, async (req, res) => {
   try {
     const user = await User.findOne({ _id: req.user.id });
     const token = jwt.sign({ id: user.id }, config.get("secretKey"), {
@@ -92,8 +130,8 @@ router.get("/authenticate", authMiddleware, async (req, res) => {
         avatar: user.avatar,
       },
     });
-  } catch (e) {
-    console.log(e);
+  } catch (err) {
+    console.log(err);
     res.send({ message: "Server error" });
   }
 });

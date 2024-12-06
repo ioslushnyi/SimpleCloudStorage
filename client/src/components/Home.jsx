@@ -8,8 +8,8 @@ export default function Home() {
       <div className="container text-center h-100">
         <div className="row justify-content-center h-100">
           <div className="col-12 align-self-center">
-            <h1>Welcome</h1>
-            <p>Store you files easily on your own cloud drive!</p>
+            <h1>Welcome!</h1>
+            <p>Store you files easily on your own cloud drive</p>
 
             <div className="row justify-content-center">
               <div className="col-4 align-self-center">

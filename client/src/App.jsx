@@ -3,7 +3,7 @@ import {
   Routes,
   Route,
   Navigate,
-  useNavigate,
+  //useNavigate,
 } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
@@ -14,14 +14,14 @@ import Login from "./components/Login.jsx";
 import Registration from "./components/Registration.jsx";
 import Drive from "./components/Drive.jsx";
 
-import { authenticateUser } from "./state/slices/userSlice";
+import { authorizeUser } from "./state/slices/userSlice";
 
 function App() {
   const isAuth = useSelector((state) => state.user.authenticated);
   const dispatch = useDispatch();
   //const navigate = useNavigate();
   useEffect(() => {
-    dispatch(authenticateUser());
+    dispatch(authorizeUser({ type: "authFromToken" }));
     //if (isAuth) {
     //  return navigate("/drive");
     //}

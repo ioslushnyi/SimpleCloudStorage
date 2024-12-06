@@ -1,8 +1,12 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+
+import { authorizeUser } from "../state/slices/userSlice";
 
 function Registration() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
 
   return (
     <>
@@ -35,7 +39,18 @@ function Registration() {
                       placeholder="Password"
                     />
                   </div>
-                  <button type="submit" className="btn btn-dark mt-2">
+                  <button
+                    type="submit"
+                    className="btn btn-dark mt-2"
+                    onClick={() =>
+                      dispatch(
+                        authorizeUser({
+                          type: "register",
+                          data: { email, password },
+                        })
+                      )
+                    }
+                  >
                     Register
                   </button>
                 </div>

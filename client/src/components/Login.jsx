@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 
-import { loginUser } from "../state/slices/userSlice";
+import { authorizeUser } from "../state/slices/userSlice";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -41,7 +41,14 @@ function Login() {
                 <button
                   type="submit"
                   className="btn btn-dark mt-2"
-                  onClick={() => dispatch(loginUser({ email, password }))}
+                  onClick={() =>
+                    dispatch(
+                      authorizeUser({
+                        type: "login",
+                        data: { email, password },
+                      })
+                    )
+                  }
                 >
                   Login
                 </button>
