@@ -1,12 +1,23 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
-import { authorizeUser } from "../state/slices/userSlice";
+import { registerUser } from "../state/slices/userSlice";
+
+import UserMessage from "./UserMessage.jsx";
 
 function Registration() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
+  const isError = useSelector((state) => state.user.isError);
+  const message = useSelector((state) => state.user.userMessage);
+  const handleRegister = () =>
+    dispatch(
+      registerUser({
+        type: "register",
+        data: { email, password },
+      })
+    );
 
   return (
     <>
@@ -39,17 +50,11 @@ function Registration() {
                       placeholder="Password"
                     />
                   </div>
+                  <UserMessage isError={isError} message={message} />
                   <button
                     type="submit"
                     className="btn btn-dark mt-2"
-                    onClick={() =>
-                      dispatch(
-                        authorizeUser({
-                          type: "register",
-                          data: { email, password },
-                        })
-                      )
-                    }
+                    onClick={handleRegister}
                   >
                     Register
                   </button>

@@ -23,7 +23,7 @@ router.post(
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({ message: "Validation has failed" });
+        return res.status(400).json({ message: "VALIDATION_FAILED" });
       }
       console.log(req.body);
       const { email, password } = req.body;
@@ -48,10 +48,10 @@ router.post(
         email,
         `http://127.0.0.1:5000/api/auth/verifyEmail?token=${emailVerificationString}`
       );
-      return res.json({ message: "User has been created" });
+      return res.status(201).json({ message: "USER_CREATED" });
     } catch (err) {
       console.log(err);
-      res.status(500).send({ message: "Server error" });
+      res.status(500).send({ message: "SERVER_ERROR" });
     }
   }
 );
@@ -61,7 +61,7 @@ router.get("/verifyEmail", async (req, res) => {
     const { token: emailVerificationString } = req.query;
     const user = await User.findOne({ emailVerificationString });
     if (!user) {
-      return res.status(400).json({ message: "User not found" });
+      return res.status(400).json({ message: "USER_NOT_FOUND" });
     }
     if (emailVerificationString === user.emailVerificationString) {
       user.emailVerificationString = "";
@@ -77,7 +77,7 @@ router.get("/verifyEmail", async (req, res) => {
     }
   } catch (err) {
     console.log(err);
-    res.status(500).send({ message: "Server error" });
+    res.status(500).send({ message: "SERVER_ERROR" });
   }
 });
 
@@ -90,15 +90,15 @@ router.post("/login", async (req, res) => {
     }
     const isPasswordValid = bcrypt.compareSync(password, user.password);
     if (!isPasswordValid) {
-      return res.json({ message: "INVALID_PASSWORD" });
+      return res.status(400).json({ message: "INVALID_PASSWORD" });
     }
     if (!user.isVerified) {
-      return res.status(200).json({ message: "NOT_VERIFIED" });
+      return res.status(400).json({ message: "USER_NOT_VERIFIED" });
     }
     const token = jwt.sign({ id: user.id }, config.get("secretKey"), {
       expiresIn: "30m",
     });
-    return res.json({
+    return res.status(200).json({
       token,
       user: {
         id: user.id,
@@ -110,7 +110,7 @@ router.post("/login", async (req, res) => {
     });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "SERVER_ERROR" });
   }
 });
 
@@ -132,7 +132,7 @@ router.get("/authFromToken", authMiddleware, async (req, res) => {
     });
   } catch (err) {
     console.log(err);
-    res.send({ message: "Server error" });
+    res.send({ message: "SERVER_ERROR" });
   }
 });
 

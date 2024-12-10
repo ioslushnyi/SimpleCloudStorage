@@ -1,38 +1,52 @@
-import axios from "axios";
 const API_URL = "http://127.0.0.1:5000";
 
 const register = async ({ email, password }) => {
   try {
-    const response = await axios.post(`${API_URL}/api/auth/register`, {
-      email,
-      password,
+    const response = await fetch(`${API_URL}/api/auth/register`, {
+      method: "POST",
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
-    sessionStorage.setItem("token", response.data.token);
-    return response;
+
+    const result = {
+      data: {
+        success: response.ok,
+        ...(await response.json()),
+      },
+    };
+
+    return result;
   } catch (err) {
     console.log(err.message);
   }
 };
 
 const login = async ({ email, password }) => {
-  /**
- * payload is empty when status 400 
- * 
- * https://github.com/axios/axios/issues/1427
- * 
- * 
- * axios.post('SOME_ENDPOINT').then(res => {
-      console.log(res.data)
-    }).catch(err => {
-      console.log(err.response.data)
-    }) */
   try {
-    const response = await axios.post(`${API_URL}/api/auth/login`, {
-      email,
-      password,
+    const response = await fetch(`${API_URL}/api/auth/login`, {
+      method: "POST",
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
-    sessionStorage.setItem("token", response.data.token);
-    return response;
+
+    const result = {
+      data: {
+        success: response.ok,
+        ...(await response.json()),
+      },
+    };
+
+    return result;
   } catch (err) {
     console.log(err.message);
   }
@@ -40,14 +54,21 @@ const login = async ({ email, password }) => {
 
 const authFromToken = async () => {
   try {
-    const response = await axios.get(
-      `${API_URL}/api/auth/authFromToken`,
+    const response = await fetch(`${API_URL}/api/auth/authFromToken`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
 
-      {
-        headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
-      }
-    );
-    return response;
+    const result = {
+      data: {
+        success: response.ok,
+        ...(await response.json()),
+      },
+    };
+    return result;
   } catch (err) {
     console.log(err.message);
   }
