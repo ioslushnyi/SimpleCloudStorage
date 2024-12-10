@@ -3,7 +3,7 @@ import {
   Routes,
   Route,
   Navigate,
-  useNavigate,
+  //useNavigate,
 } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
@@ -14,14 +14,14 @@ import Login from "./components/Login.jsx";
 import Registration from "./components/Registration.jsx";
 import Drive from "./components/Drive.jsx";
 
-import { authenticateUser } from "./state/slices/userSlice";
+import { authorizeUser } from "./state/slices/userSlice";
 
 function App() {
   const isAuth = useSelector((state) => state.user.authenticated);
   const dispatch = useDispatch();
   //const navigate = useNavigate();
   useEffect(() => {
-    dispatch(authenticateUser());
+    dispatch(authorizeUser({ type: "authFromToken" }));
     //if (isAuth) {
     //  return navigate("/drive");
     //}
@@ -29,24 +29,23 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div className="">
-        <Navbar />
-        <main>
-          <div className="bg-body-tertiary" style={{ height: "90vh" }}>
-            <Routes>
-              <Route index element={<Home />} />
-              {isAuth ? (
-                <Route path="drive" element={<Drive />} />
-              ) : (
-                <>
-                  <Route path="login" element={<Login />} />
-                  <Route path="registration" element={<Registration />} />
-                </>
-              )}
-
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </div>
+      <div className="d-flex flex-column vh-100 vw-100">
+        <header>
+          <Navbar />
+        </header>
+        <main className="bg-body-tertiary flex-grow-1 flex-shrink-1">
+          <Routes>
+            <Route index element={<Home />} />
+            {isAuth ? (
+              <Route path="drive" element={<Drive />} />
+            ) : (
+              <>
+                <Route path="login" element={<Login />} />
+                <Route path="registration" element={<Registration />} />
+              </>
+            )}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
         </main>
       </div>
     </BrowserRouter>

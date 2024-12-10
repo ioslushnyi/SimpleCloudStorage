@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 
-import { loginUser } from "../state/slices/userSlice";
+import { authorizeUser } from "../state/slices/userSlice";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -10,8 +10,8 @@ function Login() {
 
   return (
     <>
-      <div className="container text-center">
-        <div className="row justify-content-center" style={{ height: "90vh" }}>
+      <div className="container text-center h-100">
+        <div className="row justify-content-center h-100">
           <div className="col-4 align-self-center">
             <div className="card">
               <div className="card-body">
@@ -23,7 +23,7 @@ function Login() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     type="email"
-                    className="htmlForm-control"
+                    className="htmlForm-control border-box w-100"
                     id="exampleInputEmail1"
                     placeholder="Enter email"
                   />
@@ -33,7 +33,7 @@ function Login() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     type="password"
-                    className="htmlForm-control"
+                    className="htmlForm-control border-box w-100"
                     id="exampleInputPassword1"
                     placeholder="Password"
                   />
@@ -41,7 +41,14 @@ function Login() {
                 <button
                   type="submit"
                   className="btn btn-dark mt-2"
-                  onClick={() => dispatch(loginUser({ email, password }))}
+                  onClick={() =>
+                    dispatch(
+                      authorizeUser({
+                        type: "login",
+                        data: { email, password },
+                      })
+                    )
+                  }
                 >
                   Login
                 </button>
