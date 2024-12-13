@@ -25,7 +25,7 @@ router.post(
       if (!errors.isEmpty()) {
         return res.status(400).json({ message: "VALIDATION_FAILED" });
       }
-      console.log(req.body);
+      //console.log(req.body);
       const { email, password } = req.body;
 
       const existingUser = await User.findOne({ email });
