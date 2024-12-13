@@ -7,6 +7,7 @@ const initialState = {
   loading: false,
   profile: null,
   authenticated: false,
+  verified: false,
   isError: false,
   userMessage: "",
 };
